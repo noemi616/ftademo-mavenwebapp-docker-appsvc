@@ -55,6 +55,7 @@ stages:
     steps:
     - task: Docker@2
       inputs:
+        containerRegistry: '{"loginServer":"acr200302.azurecr.io", "id" : "/subscriptions/356dc8d8-fa7f-45d4-9252-b4a7baaebea4/resourceGroups/FTA_POC_Fusion5_WebAppCont_RG/providers/Microsoft.ContainerRegistry/registries/acr200302"}'      
         repository: 'mymavenwebapp-11-zulu-alpine-tomcat-9_0_31'
         command: 'build'
         Dockerfile: '**/MyMavenApp/Dockerfile'
