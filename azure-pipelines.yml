@@ -6,8 +6,11 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
+variables:
+# Agent VM image name
+- name: 'vmImageName'
+  value: 'ubuntu-latest'
+
 
 stages:
 - stage: Build
