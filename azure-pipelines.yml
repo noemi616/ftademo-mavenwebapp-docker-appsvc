@@ -46,6 +46,14 @@ stages:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
+- stage: BuildAndPushDockerImagetoACR
+  displayName: Build Docker Image and Push to ACR
+  jobs:
+  - job: DockerBuildAndPushImage
+    displayName: Docker Build and Push Image
+    pool:
+      vmImage: $(vmImageName)
+    steps:
     - task: Docker@2
       displayName: 'Build Docker Image'
       inputs:
