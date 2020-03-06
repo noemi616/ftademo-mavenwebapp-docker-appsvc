@@ -1,5 +1,5 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+This is a sample application that deploys a Maven application to a Tomcat9/JRE11 Docker image.  This custom image is then pushed to Azure Container Registry, which is then deployed as a custom Web App container running in Azure App Service in Linux.
 
 # Getting Started
 TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
