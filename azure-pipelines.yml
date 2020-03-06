@@ -13,7 +13,7 @@ variables:
 
 
 stages:
-- stage: Build Maven App
+- stage: BuildMavenApp
   displayName: Build Maven app 
   jobs:
   - job: MavenPackageAndPublishArtifacts
@@ -45,7 +45,7 @@ stages:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
-- stage: Build Docker image
+- stage: BuildDockerImage
   displayName: Build Docker image
   jobs:
   - job: DockerBuildImage
