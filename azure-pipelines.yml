@@ -46,29 +46,15 @@ stages:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
-- stage: BuildDockerImage
-  displayName: Build Docker image
-  jobs:
-  - job: DockerBuildImage
-    displayName: Docker Build Image
-    pool:
-      vmImage: $(vmImageName)
-    steps:
     - task: Docker@2
+      displayName: 'Build Docker Image'
       inputs:
         containerRegistry: 'Azure FTA ACR connection - acr200302'
         repository: 'mymavenwebapp-11-zulu-alpine-tomcat-9_0_31'
         command: 'build'
         Dockerfile: '$(build.artifactstagingdirectory)/Dockerfile'
-- stage: PushDockerImage
-  displayName: Push Docker Image to ACR
-  jobs:
-  - job: DockerPushImage
-    displayName: Docker Push Image
-    pool:
-      vmImage: $(vmImageName)
-    steps:
     - task: Docker@2
+      displayName: 'Publish Docker Image to ACR'
       inputs:
         containerRegistry: 'Azure FTA ACR connection - acr200302'
         repository: 'mymavenwebapp-11-zulu-alpine-tomcat-9_0_31'
