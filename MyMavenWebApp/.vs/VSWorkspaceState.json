@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src\\main",
+    "\\src\\main\\webapp",
+    "\\src\\main\\webapp\\WEB-INF",
+    "\\tmp\\shared",
+    "\\tmp\\shared\\app_insights",
+    "\\tmp\\shared\\tomcat",
+    "\\tmp\\shared\\tomcat\\9.0",
+    "\\tmp\\shared\\tomcat\\common"
+  ],
+  "PreviewInSolutionExplorer": false
+}
