@@ -13,8 +13,8 @@ variables:
 
 
 stages:
-- stage: BuildMavenApp
-  displayName: Build Maven app 
+- stage: BuildMavenAppAndDeployDockerImage
+  displayName: Build Maven app and deploy as custom Docker Image to ACR
   jobs:
   - job: MavenPackageAndPublishArtifacts
     displayName: Maven Package and Publish Artifacts
@@ -46,14 +46,6 @@ stages:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
-- stage: BuildAndPushDockerImagetoACR
-  displayName: Build Docker Image and Push to ACR
-  jobs:
-  - job: DockerBuildAndPushImage
-    displayName: Docker Build and Push Image
-    pool:
-      vmImage: $(vmImageName)
-    steps:
     - task: Docker@2
       displayName: 'Build Docker Image'
       inputs:
