@@ -36,7 +36,7 @@ stages:
       inputs:
         SourceFolder: '$(system.defaultworkingdirectory)'
         Contents: |
-          target/*.war
+          **/target/*.war
           **/tmp/**
         TargetFolder: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
