@@ -13,8 +13,8 @@ variables:
 
 
 stages:
-- stage: Build
-  displayName: Build stage
+- stage: Build 
+  displayName: Build Maven app 
   jobs:
   - job: MavenPackageAndPublishArtifacts
     displayName: Maven Package and Publish Artifacts
@@ -45,3 +45,16 @@ stages:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
       condition: succeededOrFailed()
+- stage: Build
+  displayName: Build Docker image
+  jobs:
+  - job: DockerBuildImage
+    displayName: Docker Build Image
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      inputs:
+        repository: 'mymavenwebapp-11-zulu-alpine-tomcat-9_0_31'
+        command: 'build'
+        Dockerfile: '**/MyMavenApp/Dockerfile'
