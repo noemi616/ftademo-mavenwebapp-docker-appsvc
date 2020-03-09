@@ -1,0 +1,69 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webAppName": {
+      "value": "tempwafc"
+    },
+    "location": {
+      "value": "Australia East"
+    },
+    "hostingEnvironment": {
+      "value": ""
+    },
+    "hostingPlanName": {
+      "value": "testasp"
+    },
+    "serverFarmResourceGroup": {
+      "value": "rgTestMyMavenInfra"
+    },
+    "alwaysOn": {
+      "value": false
+    },
+    "sku": {
+      "value": "Basic"
+    },
+    "skuCode": {
+      "value": "B1"
+    },
+    "workerSize": {
+      "value": "0"
+    },
+    "workerSizeId": {
+      "value": "0"
+    },
+    "numberOfWorkers": {
+      "value": "1"
+    },
+    "linuxFxVersion": {
+      "value": "DOCKER|nginx"
+    },
+    "dockerRegistryUrl": {
+      "value": "https://index.docker.io"
+    },
+    "dockerRegistryUsername": {
+      "value": ""
+    },
+    "dockerRegistryPassword": {
+      "value": ""
+    },
+    "dockerRegistryStartupCommand": {
+      "value": ""
+    },
+    "registryName": {
+      "value": "acr"
+    },
+    "registryLocation": {
+      "value": "australiaeast"
+    },
+    "registryApiVersion": {
+      "value": "2019-05-01"
+    },
+    "registrySku": {
+      "value": "Basic"
+    },
+    "adminUserEnabled": {
+      "value": true
+    }
+  }
+}

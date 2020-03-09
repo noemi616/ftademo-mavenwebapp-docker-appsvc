@@ -1,0 +1,177 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "Australia East",
+      "allowedValues": [
+        "Australia East",
+        "Australia Southeast"
+      ]
+    },
+    "acrName": {
+      "type": "String"
+    },
+    "acrSkuName": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "webAppName": {
+      "type": "string"
+    },
+    "appSvcPlanName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "appSvcPlanSkuCode": {
+      "type": "string",
+      "defaultValue": "F1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "linuxFxVersion": {
+      "type": "string"
+    },
+    "dockerRegistryUrl": {
+      "type": "string"
+    },
+    "dockerRegistryUsername": {
+      "type": "string"
+    },
+    "dockerRegistryPassword": {
+      "type": "securestring"
+    },
+    "dockerRegistryStartupCommand": {
+      "type": "string"
+    },
+    "hostingEnvironment": {
+      "type": "string"
+    },
+    "alwaysOn": {
+      "type": "bool"
+    }
+
+  },
+  "variables": {
+    "webAppName": "[concat(parameters('webAppName'), uniqueString(resourceGroup().id))]",
+    "registryName": "[concat(parameters('acrName'), uniqueString(resourceGroup().id))]",
+    "aspName": "[concat(parameters('appSvcPlanName'), uniqueString(resourceGroup().id))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ContainerRegistry/registries",
+      "apiVersion": "2019-12-01-preview",
+      "name": "[variables('registryName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('acrSkuName')]",
+        "tier": "[parameters('acrSkuName')]"
+      },
+      "properties": {
+        "adminUserEnabled": true,
+        "policies": {
+          "quarantinePolicy": {
+            "status": "disabled"
+          },
+          "trustPolicy": {
+            "type": "Notary",
+            "status": "disabled"
+          },
+          "retentionPolicy": {
+            "days": 7,
+            "status": "disabled"
+          }
+        },
+        "encryption": {
+          "status": "disabled"
+        }
+      }
+    },
+    {
+      "name": "[variables('aspName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "kind": "linux",
+      "apiVersion": "2019-08-01",
+      "sku": {
+        "name": "[parameters('appSvcPlanSkuCode')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerRegistry/registries', variables('registryName'))]"
+      ],
+      "tags": {
+        "displayName": "appSvcPlanName"
+      },
+      "properties": {
+        "name": "[parameters('appSvcPlanName')]",
+        "numberOfWorkers": 1
+      }
+    },
+    {
+      "name": "[variables('webAppName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2019-08-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('aspName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('appSvcPlanName')))]": "Resource",
+        "displayName": "webApp"
+      },
+      "properties": {
+        "name": "[variables('webAppName')]",
+        "enabled": true,
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "DOCKER_REGISTRY_SERVER_URL",
+              "value": "[parameters('dockerRegistryUrl')]"
+            },
+            {
+              "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+              "value": "[parameters('dockerRegistryUsername')]"
+            },
+            {
+              "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+              "value": "[parameters('dockerRegistryPassword')]"
+            },
+            {
+              "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+              "value": "false"
+            }
+          ],
+          "linuxFxVersion": "[parameters('linuxFxVersion')]",
+          "appCommandLine": "[parameters('dockerRegistryStartupCommand')]",
+          "alwaysOn": "[parameters('alwaysOn')]"
+        },
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appSvcPlanName'))]",
+        "hostingEnvironment": "[parameters('hostingEnvironment')]",
+        "clientAffinityEnabled": false
+
+      }
+    }
+  ],
+  "outputs": {}
+}

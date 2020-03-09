@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "MyMavenWebAppInfra", "MyMavenWebAppInfra\MyMavenWebAppInfra.deployproj", "{80323577-5C26-4FEE-A2C7-1C2BDCBB324E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{80323577-5C26-4FEE-A2C7-1C2BDCBB324E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80323577-5C26-4FEE-A2C7-1C2BDCBB324E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80323577-5C26-4FEE-A2C7-1C2BDCBB324E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80323577-5C26-4FEE-A2C7-1C2BDCBB324E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {69B54A94-0B1D-41DA-BFA4-8511D5432733}
+	EndGlobalSection
+EndGlobal
