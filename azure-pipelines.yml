@@ -1,0 +1,62 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+trigger:
+- master
+
+variables:
+# Agent VM image name
+- name: 'vmImageName'
+  value: 'ubuntu-latest'
+
+
+stages:
+- stage: BuildMavenAppAndDeployDockerImage
+  displayName: Build Maven app and deploy as custom Docker Image to ACR
+  jobs:
+  - job: MavenPackageAndPublishArtifacts
+    displayName: Maven Package and Publish Artifacts
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'MyMavenWebApp/pom.xml'
+        mavenOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.8'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        goals: 'package'
+    - task: CopyFiles@2
+      displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+      inputs:
+        SourceFolder: '$(system.defaultworkingdirectory)'
+        Contents: |
+          **/target/*.war
+          **/tmp/**
+          **/Dockerfile
+        TargetFolder: '$(build.artifactstagingdirectory)'
+      condition: succeededOrFailed()
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: drop'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
+      condition: succeededOrFailed()
+    - task: Docker@2
+      displayName: 'Build Docker Image'
+      inputs:
+        containerRegistry: 'Azure FTA ACR connection - acr200306'
+        repository: 'mymavenwebapp-11-zulu-alpine-tomcat-9_0_31'
+        command: 'build'
+        Dockerfile: '$(build.artifactstagingdirectory)/MyMavenWebApp/Dockerfile'
+    - task: Docker@2
+      displayName: 'Publish Docker Image to ACR'
+      inputs:
+        containerRegistry: 'Azure FTA ACR connection - acr200306'
+        repository: 'mymavenwebapp-11-zulu-alpine-tomcat-9_0_31'
+        command: 'push'
+    
