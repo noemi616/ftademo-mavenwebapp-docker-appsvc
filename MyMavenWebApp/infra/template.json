@@ -1,0 +1,188 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_webappa200306_name": {
+            "defaultValue": "webappa200306",
+            "type": "String"
+        },
+        "registries_acr200306_name": {
+            "defaultValue": "acr200306",
+            "type": "String"
+        },
+        "serverfarms_ASP_FTAPOCFusion5WebAppContRG_9cf6_externalid": {
+            "defaultValue": "/subscriptions/356dc8d8-fa7f-45d4-9252-b4a7baaebea4/resourceGroups/FTA_POC_Fusion5_WebAppCont_RG/providers/Microsoft.Web/serverfarms/ASP-FTAPOCFusion5WebAppContRG-9cf6",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.ContainerRegistry/registries",
+            "apiVersion": "2019-12-01-preview",
+            "name": "[parameters('registries_acr200306_name')]",
+            "location": "australiaeast",
+            "sku": {
+                "name": "Basic",
+                "tier": "Basic"
+            },
+            "properties": {
+                "adminUserEnabled": true,
+                "policies": {
+                    "quarantinePolicy": {
+                        "status": "disabled"
+                    },
+                    "trustPolicy": {
+                        "type": "Notary",
+                        "status": "disabled"
+                    },
+                    "retentionPolicy": {
+                        "days": 7,
+                        "status": "disabled"
+                    }
+                },
+                "encryption": {
+                    "status": "disabled"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('sites_webappa200306_name')]",
+            "location": "Australia East",
+            "kind": "app,linux,container",
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_webappa200306_name'), '.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_webappa200306_name'), '.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[parameters('serverfarms_ASP_FTAPOCFusion5WebAppContRG_9cf6_externalid')]",
+                "reserved": true,
+                "isXenon": false,
+                "hyperV": false,
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": false,
+                "redundancyMode": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('sites_webappa200306_name'), '/web')]",
+            "location": "Australia East",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_webappa200306_name'))]"
+            ],
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "linuxFxVersion": "DOCKER|acr200306.azurecr.io/mymavenwebapp-11-zulu-alpine-tomcat-9_0_31:latest",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "remoteDebuggingVersion": "VS2019",
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "$webappa200306",
+                "scmType": "VSTSRM",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": true,
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": true
+                    }
+                ],
+                "loadBalancing": "LeastRequests",
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "autoHealEnabled": false,
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictionsUseMain": false,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "ftpsState": "AllAllowed",
+                "reservedInstanceCount": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('sites_webappa200306_name'), '/11583466173746')]",
+            "location": "Australia East",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_webappa200306_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "author": "Noemi Z. Veneracion",
+                "deployer": "VSTS",
+                "message": "{\"type\":\"Deployment\",\"commitId\":\"770bc1b35eb2fb0c0e2d4922f31fc17e772b3fa0\",\"buildId\":\"164\",\"releaseId\":\"1\",\"buildNumber\":\"20200306.4\",\"releaseName\":\"Release-1\",\"repoProvider\":\"TfsGit\",\"repoName\":\"MyMavenWebApp\",\"collectionUrl\":\"https://nizvdevops.visualstudio.com/\",\"teamProject\":\"448ea5d8-2b94-4a6d-9b04-8a76d8b75122\",\"buildProjectUrl\":\"https://nizvdevops.visualstudio.com/448ea5d8-2b94-4a6d-9b04-8a76d8b75122\",\"repositoryUrl\":\"\",\"branch\":\"master\",\"teamProjectName\":\"MyMavenWebApp\",\"slotName\":\"production\"}",
+                "start_time": "2020-03-06T03:42:54.5925627Z",
+                "end_time": "2020-03-06T03:42:54.5925627Z",
+                "active": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('sites_webappa200306_name'), '/', parameters('sites_webappa200306_name'), '.azurewebsites.net')]",
+            "location": "Australia East",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_webappa200306_name'))]"
+            ],
+            "properties": {
+                "siteName": "webappa200306",
+                "hostNameType": "Verified"
+            }
+        }
+    ]
+}
